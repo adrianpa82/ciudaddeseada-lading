@@ -29,11 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Contact Form Logic
+    // Contact Form Logic - Preparado para Formspree
     const contactForm = document.getElementById('contactForm');
     const formStatus = document.getElementById('formStatus');
 
-    contactForm.addEventListener('submit', (e) => {
+    // REEMPLAZA ESTO CON TU ENLACE DE FORMSPREE
+    const formEndpoint = 'https://formspree.io/f/xykorwgz'; 
+
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         // Basic validation
@@ -48,16 +51,36 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Simulate sending
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Enviando...';
         submitBtn.disabled = true;
 
-        setTimeout(() => {
-            formStatus.textContent = '¡Mensaje enviado con éxito! Nos contactaremos a la brevedad.';
-            formStatus.className = 'form-status status-success';
-            contactForm.reset();
+        const formData = new FormData(contactForm);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch(formEndpoint, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                formStatus.textContent = '¡Mensaje enviado con éxito! Nos contactaremos a la brevedad.';
+                formStatus.className = 'form-status status-success';
+                contactForm.reset();
+            } else {
+                formStatus.textContent = 'Aún no has configurado el código de Formspree (o hubo un error).';
+                formStatus.className = 'form-status status-error';
+            }
+        } catch (error) {
+            formStatus.textContent = 'Error de conexión al enviar el mensaje.';
+            formStatus.className = 'form-status status-error';
+        } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
             
@@ -65,6 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 formStatus.textContent = '';
             }, 5000);
-        }, 1500);
+        }
     });
 });

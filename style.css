@@ -492,6 +492,18 @@ img {
 }
 
 /* =========================================
+   NOTICIAS
+========================================= */
+.noticias-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background-color: var(--bg-white);
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+/* =========================================
    CONTACTO
 ========================================= */
 .contacto-wrapper {
